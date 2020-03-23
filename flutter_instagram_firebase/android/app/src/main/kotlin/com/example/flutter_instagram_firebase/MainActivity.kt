@@ -1,4 +1,4 @@
-package com.example.flutter_instagram_firebase
+package com.sumithpd.flutterInstagramFirebase
 
 import io.flutter.embedding.android.FlutterActivity
 
