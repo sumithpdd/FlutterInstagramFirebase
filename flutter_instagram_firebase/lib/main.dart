@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_instagram_firebase/screens/feed_screen.dart';
+import 'package:flutter_instagram_firebase/screens/home_screen.dart';
 import 'package:flutter_instagram_firebase/screens/signup_screen.dart';
 
 import 'screens/login_screen.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
           // Provider.of<UserData>(context).currentUserId = snapshot.data.uid;
-          return FeedScreen();
+          return HomeScreen(userId: snapshot.data.uid);
         } else {
           return LoginScreen();
         }
@@ -31,13 +32,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Instagram Firebase',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryIconTheme: Theme.of(context).primaryIconTheme.copyWith(
+              color: Colors.black,
+            ),
         primarySwatch: Colors.blue,
       ),
       home: _getScreenId(),
       routes: {
         LoginScreen.id: (context) => LoginScreen(),
         SignupScreen.id: (context) => SignupScreen(),
-        FeedScreen.id:(context) => FeedScreen(),
+        FeedScreen.id: (context) => FeedScreen(),
       },
     );
   }
