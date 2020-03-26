@@ -12,15 +12,18 @@ class StorageService {
       String url, File imageFile) async {
     String photoId = Uuid().v4();
     File image = await compressImage(photoId, imageFile);
-    if(url.isEmpty){
-      RegExp exp =RegExp(r'userProfile_(.*).jpg');
-      photoId =exp.firstMatch(url)[1];
+
+    if (url.isNotEmpty) {
+      // Updating user profile image
+      RegExp exp = RegExp(r'userProfile_(.*).jpg');
+      photoId = exp.firstMatch(url)[1];
     }
+
     StorageUploadTask uploadTask = storageRef
         .child('images/users/userProfile_$photoId.jpg')
         .putFile(image);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
+    String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
   }
 
