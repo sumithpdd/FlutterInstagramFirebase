@@ -31,6 +31,8 @@ dependencies:
   uuid: ^2.0.4
   provider: ^4.0.4
   image_cropper: ^1.1.0
+  animator: ^1.0.0+5
+  intl: ^0.16.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

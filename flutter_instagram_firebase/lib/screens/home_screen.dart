@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String currentUserId =Provider.of<UserData>(context,listen: false).currentUserId;
     return Scaffold(
 //      appBar: AppBar(
 //        backgroundColor: Colors.white,
@@ -39,11 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
 //      ),
       body: PageView(
         children: <Widget>[
-          FeedScreen(),
+          FeedScreen(currentUserId: currentUserId),
           SearchScreen(),
           CreatePostScreen(),
-          ActivityScreen(),
-          ProfileScreen(userId :Provider.of<UserData>(context).currentUserId),
+          ActivityScreen(currentUserId: currentUserId),
+          ProfileScreen(currentUserId: currentUserId,
+            userId :currentUserId),
         ],
         controller: _pageController,
         onPageChanged: (int index) {
