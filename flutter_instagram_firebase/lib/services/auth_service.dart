@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_instagram_firebase/models/user_data.dart';
-import 'package:flutter_instagram_firebase/screens/feed_screen.dart';
-import 'package:flutter_instagram_firebase/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class AuthService {
