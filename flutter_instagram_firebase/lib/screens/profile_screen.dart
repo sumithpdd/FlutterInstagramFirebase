@@ -107,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _displayButton(User user) {
-    return user.id == Provider.of<UserData>(context).currentUserId
+    return user.id == Provider.of<UserData>(context,listen: false).currentUserId
         ? Container(
             width: 200.0,
             child: FlatButton(

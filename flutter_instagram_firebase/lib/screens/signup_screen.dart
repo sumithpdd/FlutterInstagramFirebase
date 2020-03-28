@@ -10,6 +10,15 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   String _name, _email, _password;
+
+  _submit() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      // Logging in the user w/ Firebase
+      AuthService.signUpUser(context, _name, _email, _password);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +31,10 @@ class _SignupScreenState extends State<SignupScreen> {
             children: <Widget>[
               Text(
                 'Instagram',
-                style: TextStyle(fontFamily: 'Billabong', fontSize: 50.0),
+                style: TextStyle(
+                  fontFamily: 'Billabong',
+                  fontSize: 50.0,
+                ),
               ),
               Form(
                 key: _formKey,
@@ -30,8 +42,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 38.0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.0,
                         vertical: 10.0,
                       ),
                       child: TextFormField(
@@ -43,8 +55,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 38.0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.0,
                         vertical: 10.0,
                       ),
                       child: TextFormField(
@@ -56,22 +68,20 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 38.0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.0,
                         vertical: 10.0,
                       ),
                       child: TextFormField(
                         decoration: InputDecoration(labelText: 'Password'),
                         validator: (input) => input.length < 6
-                            ? 'Must be atleast 6 characters '
+                            ? 'Must be at least 6 characters'
                             : null,
                         onSaved: (input) => _password = input,
                         obscureText: true,
                       ),
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Container(
                       width: 250.0,
                       child: FlatButton(
@@ -79,7 +89,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         color: Colors.blue,
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Signup',
+                          'Sign Up',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18.0,
@@ -87,9 +97,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Container(
                       width: 250.0,
                       child: FlatButton(
@@ -104,7 +112,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -113,12 +121,5 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
     );
-  }
-
-  void _submit() {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      AuthService.signUpUser(context, _name, _email, _password);
-    }
   }
 }

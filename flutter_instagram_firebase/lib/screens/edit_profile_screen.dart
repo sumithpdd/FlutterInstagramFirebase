@@ -16,8 +16,9 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name, _bio;
-  File _profileImage;
+   File _profileImage;
+  String _name = '';
+  String _bio = '';
   bool _isLoading = false;
   @override
   void initState() {
@@ -35,6 +36,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  _displayProfileImage() {
+    // No new profile image
+    if (_profileImage == null) {
+      // No existing profile image
+      if (widget.user.profileImageUrl.isEmpty) {
+        // Display placeholder
+        return AssetImage('assets/images/user_placeholder.jpg');
+      } else {
+        // User profile image exists
+        return CachedNetworkImageProvider(widget.user.profileImageUrl);
+      }
+    } else {
+      // New profile image
+      return FileImage(_profileImage);
+    }
+  }
+
+  _submit() async {
+    if (_formKey.currentState.validate() && !_isLoading) {
+      _formKey.currentState.save();
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Update user in database
+      String _profileImageUrl = '';
+
+      if (_profileImage == null) {
+        _profileImageUrl = widget.user.profileImageUrl;
+      } else {
+        _profileImageUrl = await StorageService.uploadUserProfileImage(
+          widget.user.profileImageUrl,
+          _profileImage,
+        );
+      }
+
+      User user = User(
+        id: widget.user.id,
+        name: _name,
+        profileImageUrl: _profileImageUrl,
+        bio: _bio,
+      );
+      // Database update
+      DatabaseService.updateUser(user);
+
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +94,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Edit Profile',
-          style: TextStyle(
-            color: Colors.black,
-          ),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: GestureDetector(
@@ -82,10 +131,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       initialValue: _name,
                       style: TextStyle(fontSize: 18.0),
                       decoration: InputDecoration(
-                          icon: Icon(Icons.person, size: 30.0),
-                          labelText: 'Name'),
+                        icon: Icon(
+                          Icons.person,
+                          size: 30.0,
+                        ),
+                        labelText: 'Name',
+                      ),
                       validator: (input) => input.trim().length < 1
-                          ? 'Please enter a vaild name'
+                          ? 'Please enter a valid name'
                           : null,
                       onSaved: (input) => _name = input,
                     ),
@@ -93,7 +146,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       initialValue: _bio,
                       style: TextStyle(fontSize: 18.0),
                       decoration: InputDecoration(
-                          icon: Icon(Icons.book, size: 30.0), labelText: 'Bio'),
+                        icon: Icon(
+                          Icons.book,
+                          size: 30.0,
+                        ),
+                        labelText: 'Bio',
+                      ),
                       validator: (input) => input.trim().length > 150
                           ? 'Please enter a bio less than 150 characters'
                           : null,
@@ -102,16 +160,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Container(
                       margin: EdgeInsets.all(40.0),
                       height: 40.0,
-                      width: 250,
+                      width: 250.0,
                       child: FlatButton(
                         onPressed: _submit,
                         color: Colors.blue,
+                        textColor: Colors.white,
                         child: Text(
                           'Save Profile',
                           style: TextStyle(fontSize: 18.0),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -120,42 +179,5 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
     );
-  }
-
-  _submit() async {
-    if (_formKey.currentState.validate() && !_isLoading) {
-      _formKey.currentState.save();
-      setState(() {
-        _isLoading = true;
-      });
-      String _profileImageUrl = '';
-      if (_profileImage == null) {
-        _profileImageUrl = widget.user.profileImageUrl;
-      } else {
-        _profileImageUrl = await StorageService.uploadUserProfileImage(
-          widget.user.profileImageUrl,
-          _profileImage,
-        );
-      }
-      User user = User(
-          id: widget.user.id,
-          name: _name,
-          profileImageUrl: _profileImageUrl,
-          bio: _bio);
-      DatabaseService.updateUser(user);
-      Navigator.pop(context);
-    }
-  }
-
-  _displayProfileImage() {
-    if (_profileImage == null) {
-      if (widget.user.profileImageUrl.isEmpty) {
-        return AssetImage('assets/images/user_placeholder.jpg');
-      } else {
-        return CachedNetworkImageProvider(widget.user.profileImageUrl);
-      }
-    } else {
-      return FileImage(_profileImage);
-    }
   }
 }

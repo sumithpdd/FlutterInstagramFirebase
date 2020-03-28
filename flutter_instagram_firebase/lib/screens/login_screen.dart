@@ -11,19 +11,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
 
+  _submit() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      // Logging in the user w/ Firebase
+      AuthService.login(_email, _password);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
+        child: Container(
+          height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
                 'Instagram',
-                style: TextStyle(fontFamily: 'Billabong', fontSize: 50.0),
+                style: TextStyle(
+                  fontFamily: 'Billabong',
+                  fontSize: 50.0,
+                ),
               ),
               Form(
                 key: _formKey,
@@ -31,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 38.0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.0,
                         vertical: 10.0,
                       ),
                       child: TextFormField(
@@ -44,22 +55,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 38.0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.0,
                         vertical: 10.0,
                       ),
                       child: TextFormField(
                         decoration: InputDecoration(labelText: 'Password'),
                         validator: (input) => input.length < 6
-                            ? 'Must be atleast 6 characters '
+                            ? 'Must be at least 6 characters'
                             : null,
                         onSaved: (input) => _password = input,
                         obscureText: true,
                       ),
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Container(
                       width: 250.0,
                       child: FlatButton(
@@ -75,27 +84,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
+                    SizedBox(height: 20.0),
                     Container(
                       width: 250.0,
                       child: FlatButton(
-                        onPressed: () => Navigator.pushNamed(
-                          context,
-                          SignupScreen.id,
-                        ),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, SignupScreen.id),
                         color: Colors.blue,
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Go to signup',
+                          'Go to Signup',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18.0,
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -104,12 +109,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  void _submit() {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      AuthService.login(_email,_password);
-    }
   }
 }

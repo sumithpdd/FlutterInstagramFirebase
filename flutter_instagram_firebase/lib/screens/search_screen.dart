@@ -16,66 +16,7 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
   Future<QuerySnapshot> _users;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 15.0,
-              ),
-              border: InputBorder.none,
-              hintText: 'Search',
-              prefixIcon: Icon(
-                Icons.search,
-                size: 30.0,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: _clearSearch,
-              ),
-              filled: true,
-            ),
-            onSubmitted: (input) {
-              print(input);
-              setState(() {
-                _users = DatabaseService.searchUsers(input);
-              });
-            },
-          ),
-        ),
-        body: _users == null
-            ? Center(
-                child: Text('Search for a user'),
-              )
-            : FutureBuilder(
-                future: _users,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.data.documents.length == 0) {
-                    return Center(
-                      child: Text('No users found! Please try again.'),
-                    );
-                  }
-                  return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        User user =
-                            User.fromDoc(snapshot.data.documents[index]);
-                        return _buildUserTile(user);
-                      });
-                },
-              ));
-  }
-
-  Widget _buildUserTile(User user) {
+  _buildUserTile(User user) {
     return ListTile(
       leading: CircleAvatar(
         radius: 20.0,
@@ -85,11 +26,14 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       title: Text(user.name),
       onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => ProfileScreen(
-                  currentUserId: Provider.of<UserData>(context,listen: false).currentUserId,
-                  userId: user.id))),
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProfileScreen(
+            currentUserId: Provider.of<UserData>(context,listen: false).currentUserId,
+            userId: user.id,
+          ),
+        ),
+      ),
     );
   }
 
@@ -99,5 +43,66 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _users = null;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+            border: InputBorder.none,
+            hintText: 'Search',
+            prefixIcon: Icon(
+              Icons.search,
+              size: 30.0,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                Icons.clear,
+              ),
+              onPressed: _clearSearch,
+            ),
+            filled: true,
+          ),
+          onSubmitted: (input) {
+            if (input.isNotEmpty) {
+              setState(() {
+                _users = DatabaseService.searchUsers(input);
+              });
+            }
+          },
+        ),
+      ),
+      body: _users == null
+          ? Center(
+              child: Text('Search for a user'),
+            )
+          : FutureBuilder(
+              future: _users,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.data.documents.length == 0) {
+                  return Center(
+                    child: Text('No users found! Please try again.'),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    User user = User.fromDoc(snapshot.data.documents[index]);
+                    return _buildUserTile(user);
+                  },
+                );
+              },
+            ),
+    );
   }
 }

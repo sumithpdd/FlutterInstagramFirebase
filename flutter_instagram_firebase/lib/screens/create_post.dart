@@ -85,7 +85,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(source: source);
     if (imageFile != null) {
-      // imageFile = await _cropImage(imageFile);
+      imageFile = await _cropImage(imageFile);
       setState(() {
         _image = imageFile;
       });
